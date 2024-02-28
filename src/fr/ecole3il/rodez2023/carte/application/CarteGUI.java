@@ -1,5 +1,28 @@
 package fr.ecole3il.rodez2023.carte.application;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeAEtoile;
+import fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeChemin;
+import fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeDijkstra;
+import fr.ecole3il.rodez2023.carte.elements.Carte;
+import fr.ecole3il.rodez2023.carte.elements.Case;
+import fr.ecole3il.rodez2023.carte.manipulateurs.GenerateurCarte;
+
 /**
  * @author p.roquart
  * voilà
