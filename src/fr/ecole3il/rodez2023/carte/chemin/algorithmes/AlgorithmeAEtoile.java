@@ -3,62 +3,77 @@ package fr.ecole3il.rodez2023.carte.chemin.algorithmes;
 import fr.ecole3il.rodez2023.carte.elements.Graphe;
 import fr.ecole3il.rodez2023.carte.elements.Noeud;
 import java.util.*;
-import java.util.function.Function;
 
+/**
+ * L'algorithme A* est une méthode de recherche de chemin dans un graphe qui
+ * utilise à la fois
+ * les informations sur le coût pour atteindre un nœud et une estimation du coût
+ * restant
+ * pour atteindre la destination.
+ *
+ * @param <E> Le type de données contenu dans chaque nœud du graphe.
+ */
 public class AlgorithmeAEtoile<E> implements AlgorithmeChemin<E> {
-
-    private final Function<Noeud<E>, Double> heuristique;
-
-    public AlgorithmeAEtoile(Function<Noeud<E>, Double> heuristique) {
-        this.heuristique = heuristique;
-    }
-
+    /**
+     * Trouve un chemin entre un nœud de départ et un nœud d'arrivée dans un graphe
+     * donné en utilisant
+     * l'algorithme A*.
+     *
+     * @param graphe  Le graphe dans lequel chercher le chemin.
+     * @param depart  Le nœud de départ.
+     * @param arrivee Le nœud d'arrivée.
+     * @return Une liste de nœuds représentant le chemin trouvé.
+     */
     @Override
     public List<Noeud<E>> trouverChemin(Graphe<E> graphe, Noeud<E> depart, Noeud<E> arrivee) {
-        Map<Noeud<E>, Double> couts = new HashMap<>();
         Map<Noeud<E>, Noeud<E>> predecesseurs = new HashMap<>();
-        Map<Noeud<E>, Double> coutTotalEstime = new HashMap<>(); // This will store the f(n) = g(n) + h(n) values
+        Map<Noeud<E>, Double> coutEstime = new HashMap<>();
+        Map<Noeud<E>, Double> coutActuel = new HashMap<>();
 
-        // Initialize coutTotalEstime with infinity for all nodes except the start node
+        // Initialisation des coûts pour chaque nœud du graphe
         for (Noeud<E> noeud : graphe.getNoeuds()) {
-            coutTotalEstime.put(noeud, Double.POSITIVE_INFINITY);
+            coutActuel.put(noeud, Double.POSITIVE_INFINITY);
+            coutEstime.put(noeud, Double.POSITIVE_INFINITY);
+            predecesseurs.put(noeud, null);
         }
-        coutTotalEstime.put(depart, heuristique.apply(depart));
+        // Le coût actuel et estimé pour le nœud de départ est initialisé à 0
+        coutActuel.put(depart, 0.0);
+        coutEstime.put(depart, 0.0);
 
-        PriorityQueue<Noeud<E>> ouverts = new PriorityQueue<>(Comparator.comparingDouble(n -> couts.getOrDefault(n, Double.POSITIVE_INFINITY) + heuristique.apply(n)));
+        // File de priorité pour stocker les nœuds ouverts, triés par le coût estimé
+        // total
+        PriorityQueue<Noeud<E>> ouverts = new PriorityQueue<>(
+                (n1, n2) -> (int) (coutEstime.get(n1) - coutEstime.get(n2)));
         ouverts.add(depart);
-        couts.put(depart, 0.0);
 
+        // Boucle principale de l'algorithme A*
         while (!ouverts.isEmpty()) {
             Noeud<E> courant = ouverts.poll();
-            if (courant.equals(arrivee)) {
-                return reconstruireChemin(predecesseurs, arrivee);
-            }
-
+            // Si le nœud courant est le nœud d'arrivée, on a trouvé le chemin
+            if (courant.equals(arrivee))
+                break;
+            // Parcours des voisins du nœud courant
             for (Noeud<E> voisin : graphe.getVoisins(courant)) {
-                double coutActuel = couts.getOrDefault(courant, Double.POSITIVE_INFINITY) + graphe.getCoutArete(courant, voisin);
-                if (coutActuel < couts.getOrDefault(voisin, Double.POSITIVE_INFINITY)) {
+                double cout = coutActuel.get(courant) + graphe.getCoutArete(courant, voisin);
+                // Si le nouveau coût pour atteindre le voisin est meilleur que le coût actuel,
+                // on met à jour les informations du voisin et on l'ajoute à la file de priorité
+                if (cout < coutActuel.get(voisin)) {
                     predecesseurs.put(voisin, courant);
-                    couts.put(voisin, coutActuel);
-                    coutTotalEstime.put(voisin, coutActuel + heuristique.apply(voisin));
-                    if (!ouverts.contains(voisin)) {
-                        ouverts.add(voisin);
-                    }
+                    coutActuel.put(voisin, cout);
+                    coutEstime.put(voisin, cout);
+                    ouverts.add(voisin);
                 }
             }
         }
-
-        return Collections.emptyList(); // Return an empty path if no path is found
-    }
-
-    private List<Noeud<E>> reconstruireChemin(Map<Noeud<E>, Noeud<E>> predecesseurs, Noeud<E> arrivee) {
-        LinkedList<Noeud<E>> chemin = new LinkedList<>();
+        // Reconstruction du chemin à partir des prédécesseurs
+        List<Noeud<E>> chemin = new LinkedList<>();
         Noeud<E> etape = arrivee;
         while (etape != null) {
-            chemin.addFirst(etape);
+            chemin.add(etape);
             etape = predecesseurs.get(etape);
         }
+        // Inversion du chemin pour obtenir l'ordre correct des nœuds
+        Collections.reverse(chemin);
         return chemin;
     }
 }
-
