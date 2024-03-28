@@ -3,7 +3,6 @@ package fr.ecole3il.rodez2023.carte.elements;
 /**
  * La classe Carte représente une carte composée de tuiles disposées en une grille bidimensionnelle.
  * 
- * @author proussille
  */
 public class Carte {
     private Tuile[][] tuiles; // Matrice de tuiles représentant la carte
