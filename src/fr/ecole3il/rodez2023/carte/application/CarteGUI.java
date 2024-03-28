@@ -16,20 +16,23 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import fr.ecole3il.rodez2023.carte.AdaptateurAlgorithme;
 import fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeAEtoile;
 import fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeChemin;
 import fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeDijkstra;
 import fr.ecole3il.rodez2023.carte.elements.Carte;
 import fr.ecole3il.rodez2023.carte.elements.Case;
+import fr.ecole3il.rodez2023.carte.elements.Chemin;
+import fr.ecole3il.rodez2023.carte.elements.Tuile;
 import fr.ecole3il.rodez2023.carte.manipulateurs.GenerateurCarte;
 
 /**
- * @author p.roquart
- * voilà
- * donc
- * c'est la classe finale pour le gui quoi
- * enfin je sais pas
- * moi j'aime pas le java
+ * Cette classe représente l'interface graphique (GUI) pour afficher une carte,
+ * sélectionner des cases de départ et d'arrivée, et visualiser le chemin le plus court
+ * entre ces deux cases.
+ * 
+ * Elle permet également de choisir l'algorithme à utiliser pour trouver le chemin le plus court.
+ * 
  */
 public class CarteGUI extends JFrame {
 	private Carte carte;
@@ -37,6 +40,11 @@ public class CarteGUI extends JFrame {
 	private Case caseArrivee;
 	private AlgorithmeChemin algorithme;
 
+	/**
+     * Construit une nouvelle instance de la classe `CarteGUI` avec une carte spécifiée.
+     * 
+     * @param carte La carte à afficher dans l'interface graphique.
+     */
 	public CarteGUI(Carte carte) {
 		this.carte = carte;
 		this.caseDepart = null;
@@ -117,8 +125,7 @@ public class CarteGUI extends JFrame {
 		}
 
 		if (caseDepart != null && caseArrivee != null) {
-			Chemin chemin = algorithme.trouverChemin(carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(),
-					caseArrivee.getY());
+			Chemin chemin = AdaptateurAlgorithme.trouverChemin(algorithme, carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(),caseArrivee.getY());
 			g.setColor(Color.RED);
 			for (Case c : chemin.getCases()) {
 				g.fillRect(c.getX() * 32, c.getY() * 32, 32, 32);
@@ -128,8 +135,7 @@ public class CarteGUI extends JFrame {
 
 	private void trouverChemin() {
 		if (caseDepart != null && caseArrivee != null) {
-			Chemin chemin = algorithme.trouverChemin(carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(),
-					caseArrivee.getY());
+			Chemin chemin = AdaptateurAlgorithme.trouverChemin(algorithme,carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(),caseArrivee.getY());
 			System.out.println("Chemin le plus court :");
 			for (Case c : chemin.getCases()) {
 				System.out.println("[" + c.getX() + ", " + c.getY() + "]");
